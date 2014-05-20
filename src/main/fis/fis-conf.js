@@ -1,3 +1,10 @@
+var contextPath = process.env.CONTEXTPATH;
+if (!contextPath || contextPath == '/') {
+	contextPath = '';
+}
+
+console.log('CONTEXTPATH ' + contextPath);
+
 fis.config.set('roadmap.path', [
     {
         reg : '**.jsp' //jsp文件不调整部署结构
@@ -12,6 +19,7 @@ fis.config.set('roadmap.path', [
     {
         reg : 'widget/**.js',   //widget目录下的js文件
         isMod : true,           //组件化包装
+		url : contextPath + '/static$&', //url 带上 contextPath
         release : '/static/$&'  //发布到/static/目录下
     },
     {
@@ -20,6 +28,8 @@ fis.config.set('roadmap.path', [
     },
     {
         reg : '**',             //其他文件
+		useMap : true,
+		url : contextPath + '/static$&', //url 带上 contextPath
         release : '/static/$&'  //发布到/static/目录下
     }
 ]);
@@ -46,4 +56,13 @@ fis.config.set('pack', {
     ],
     'pkg/widget.js' : 'widget/**.js',
     'pkg/widget.css' : 'widget/**.css'
+});
+
+fis.config.set('deploy', {
+	//使用fis release --dest webapp 来使用这个配置
+	webapp : {
+		//from参数省略，表示从发布后的根目录开始上传
+		//发布到当前项目的 webapp 目录
+		to: '../webapp'
+	}
 });

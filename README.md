@@ -5,29 +5,36 @@
 
 1. fis
 1. java
+2. maven
 
 ## 运行方法：
 
-    注意：一定要先构建，后启动server，因为源码中有server的lib
+	mvn jetty:run
 
-1. 进入项目目录
-    * cd project
-1. 构建项目
-    * 预览开发效果命令： ``fis release``
-    * 预览开发效果，并监听文件变化命令： ``fis release -w``
-    * 预览开发效果，并监听文件变化，同时自动刷新浏览器命令：``fis release -wL``
-    * 预览文件压缩，加域名，资源合并，csssprite等效果，并监听文件变化，同时自动刷新浏览器命令：``fis release -oDpwL``
-1. 启动内置服务器
-    * fis server start
-1. 刷新页面（ http://127.0.0.1:8080/ ），查看效果
+刷新页面（ http://127.0.0.1:8080/fis ），查看效果
+
+或者
+	
+	mvn -Dfis.args='release -mpod webapp' jetty:run
+
+刷新页面（ http://127.0.0.1:8080/fis ），查看效果
+
+	mvn package 
+
+或者
+
+	mvn -Dfis.args='release -mpod webapp' package
+
+打包发布
+
 
 ## 目录说明：
 
-* WEB-INF目录下放fis提供的jsp标签配置及相关jar包文件，包来源看 [这里](https://github.com/fouber/fis-java-resource)
-* lib目录下放基础库文件，jquery、boostrap等
-* widget目录下放组件化文件
-* fis-conf.js 文件是项目配置
-* index.jsp是入口页面文件
+* src/main/fis/WEB-INF目录下放fis提供的jsp标签配置及相关jar包文件，包来源看 [这里](https://github.com/leiqin/fis-java-resource)
+* src/main/fis/lib目录下放基础库文件，jquery、boostrap等
+* src/main/fis/widget目录下放组件化文件
+* src/main/fis/fis-conf.js 文件是项目配置
+* src/main/fis/index.jsp是入口页面文件
 
 ## jsp页面示例
 
@@ -104,6 +111,7 @@ fis.config.set('roadmap.path', [
     {
         reg : 'widget/**.js',   //widget目录下的js文件
         isMod : true,           //组件化包装
+		url : contextPath + '/static$&', //url 带上 contextPath
         release : '/static/$&'  //发布到/static/目录下
     },
     {
@@ -112,6 +120,8 @@ fis.config.set('roadmap.path', [
     },
     {
         reg : '**',             //其他文件
+		useMap : true,
+		url : contextPath + '/static$&', //url 带上 contextPath
         release : '/static/$&'  //发布到/static/目录下
     }
 ]);
@@ -138,5 +148,14 @@ fis.config.set('pack', {
     ],
     'pkg/widget.js' : 'widget/**.js',
     'pkg/widget.css' : 'widget/**.css'
+});
+
+fis.config.set('deploy', {
+	//使用fis release --dest webapp 来使用这个配置
+	webapp : {
+		//from参数省略，表示从发布后的根目录开始上传
+		//发布到当前项目的 webapp 目录
+		to: '../webapp'
+	}
 });
 ```
